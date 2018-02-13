@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Web Monitor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='panel.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='main.css') }}">
+
+
+    <link href="{{ url_for('static', filename='bootstrap-3.3.7/dist/css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap/bootstrap-select.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='jquery/jquery.dataTables.min.css') }}" rel="stylesheet">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+
+
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery-1.12.4.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/bootstrap-select.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='play.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.dataTables.min.js') }}"></script>
+
+
+    <script type=text/javascript>
+
+            $(document).ready(function(){
+
+
+
+
+
+
+                if ($(':checkbox:checked').length > 0) {
+
+                  //  $('.checkbox-tools').animate({top: '200px'});
+                     $('input:text').prop('disabled', false);
+
+                } else {
+
+                   // $('.checkbox-tools').animate({top: '-450px'});
+                     $('input:text').prop('disabled', true);
+                     $('#search_button').attr('disabled', true);
+                     $('input:text').val('');
+                }
+
+
+
+                $(':checkbox').change(function() {
+                    // use the :checked selector to find any that are checked
+                    if ($(':checkbox:checked').length > 0) {
+
+                      //  $('.checkbox-tools').animate({top: '200px'});
+                         $('input:text').prop('disabled', false);
+
+                    } else {
+
+                       // $('.checkbox-tools').animate({top: '-450px'});
+                        $('input:text').prop('disabled', true);
+                        $('#search_button').attr('disabled', true);
+                        $('input:text').val('');
+                    }
+                 });
+
+
+
+              $("#checkAll").change(function () {
+                $("input:checkbox").prop('checked', $(this).prop("checked"));
+                console.log("checkall-inner");
+              });
+
+                load();
+
+                $('input[id="msg"]').keyup(function() {
+
+                    var empty = true;
+
+                    $('input[id="msg"]').each(function() {
+
+                        if($(this).val() == '')
+                        {
+                            empty = true;
+
+                            $('#search_button').attr('disabled', true);
+
+                            console.log('empty')
+                            return false;
+
+                        }
+                        else {
+                            empty = false;
+                        }
+                    });
+
+                    if(!empty)  {
+
+                        $('#search_button').attr('disabled', false);
+
+                      }
+                 });
+
+                if($('#msg').val() != '') {
+                        $('#search_button').attr('disabled', false);
+
+                        }
+
+                    else {
+                        $('#search_button').attr('disabled', true);
+
+                        console.log("blochim")
+                }
+
+
+                $('#filial').prop('checked', true);
+                $('#code-of-section').prop('checked', true);
+                $('#CodeSection').prop('checked', true);
+                $('#NameProduct').prop('checked', true);
+                $('#Balance').prop('checked', true);
+                $('#cash-price').prop('checked', true);
+
+
+                   $.ajax({
+                       "url": "/background",
+                       "success": function(json) {
+                           console.log(json)
+                            var tableHeaders;
+                            $.each(json.columns, function(i, val){
+                                tableHeaders += "<th>" + val + "</th>";
+                            });
+
+                            //$("#example").empty();
+                            //$("#example").append('<table id="displayTable" class="display" cellspacing="0" width="100%"><thead><tr>' + tableHeaders + '</tr></thead></table>');
+                            $("#info-table").find("thead tr").append(tableHeaders);
+
+                            $('#info-table').dataTable(json ,{
+
+                            } );
+                        },
+                        "dataType": "json"
+                  });
+
+
+
+                $( "#search_button" ).click(function() {
+                 $.ajax({
+                       "url": "/background",
+                       "success": function(json) {
+                           console.log(json)
+                        },
+                        "dataType": "json"
+                  });
+                });
+
+
+
+
+            });
+
+    </script>
+
+
+</head>
+
+
+<body>
+
+<div class="container-fluid">
+
+<div class="row">
+
+    <!--///////////////////////////////////////navigation/////////////////////////////////////////////////////-->
+              <nav class="navbar navbar-default navbar-fixed-top show-scroll" >
+                <div class="container">
+
+                    <div class="col-lg-12">
+
+                        <div class="navbar-header" >
+                            <a class="navbar-brand navbar-link smooth-scroll" href="#">Web Monitor</a>
+                            <a class="error navbar-brand navbar-link smooth-scroll"><strong>Вы зашли как:</strong> {{ user }}</a>
+                        </div>
+
+                        <div class="collapse navbar-collapse" id="loguot">
+                            <a class="btn btn-primary navbar-btn navbar-right " role="button" href="/" onclick="wis()">Log Out</a>
+                        </div>
+
+                    </div>
+                </div>
+              </nav>
+    <!--///////////////////////navigation end////////////////////////////////////////////////////////////////////-->
+<br>
+<br>
+
+
+
+
+ <form  action="" method="post" role="form" >
+        {{ form.csrf }}
+
+        <div class="col-sm-3 col-md-3">
+
+             <div  class="panel-group" id="accordion">
+                <div class="panel panel-success">
+
+                     <div class="panel-heading ">
+                            <h4 class="panel-title ">
+                                <p data-toggle="collapse" data-parent="#accordion"><span class="glyphicon glyphicon-filter ">
+                                </span>Фильтр</p>
+                            </h4>
+                      </div>
+
+                 <div class="list-group panel panel-default">
+
+                    <h4 class="panel-title">
+                        <a href="#meas" class="list-group-item strong" data-toggle="collapse" data-parent="#accordion">Измерения <i class="fa fa-caret-down"></i></a>
+                    </h4>
+
+                     <div class="collapse" id="meas">
+
+                            <div id="check-list-box1" class="list-group checked-list-box list-group-item button">
+                                <fieldset>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="checkAll" type="checkbox">
+                                        <label for="checkAll">
+                                           Выбрать всё
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="filial" type="checkbox" name="check" value="[Филиал]" checked="checked">
+                                        <label for="filial">
+                                            Филиал
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="type-of-filial" type="checkbox" value="[Тип филиала]" name="check" checked="checked">
+                                        <label for="type-of-filial">
+                                            Тип филиала
+                                        </label>
+                                    </div>
+
+                                     <div class="checkbox checkbox-success">
+                                        <input id="code-of-section" type="checkbox" name="check" value="[Секция]" checked >
+                                        <label for="code-of-section">
+                                            Код секции
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="code-of-product" type="checkbox" name="check" value="[Краткий код]">
+                                        <label for="code-of-product">
+                                            Краткий код
+                                        </label>
+                                    </div>
+
+                                     <div class="checkbox checkbox-success">
+                                        <input id="CodeSection" type="checkbox" name="check" value="[Полный код]" checked>
+                                        <label for="CodeSection">
+                                            Код товара
+                                        </label>
+                                    </div>
+
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="code-of-1c" type="checkbox" name="check" value="[Код 1С]">
+                                        <label for="code-of-1c">
+                                            Код товара 1С
+                                        </label>
+                                    </div>
+
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="NameProduct" type="checkbox" name="check" value="[Название]" checked>
+                                        <label for="NameProduct">
+                                            Название
+                                        </label>
+                                    </div>
+
+                                     <div class="checkbox checkbox-success">
+                                        <input id="Category" type="checkbox" name="check" value="[Категория]">
+                                        <label for="Category">
+                                            Категория
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="measure-chk" type="checkbox" name="check" value="[Единица измерения]">
+                                        <label for="measure-chk">
+                                            Единица измерения
+                                        </label>
+                                    </div>
+
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="pieces-per-pack" type="checkbox" name="check" value="[Количество в упаковке]" checked>
+                                        <label for="pieces-per-pack">
+                                            Штук в упаковке
+                                        </label>
+                                    </div>
+
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="type" type="checkbox" name="check" value="[Тип]">
+                                        <label for="type">
+                                            Тип
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="buyer" type="checkbox" name="check" value="[Закупщик]">
+                                        <label for="buyer">
+                                            Закупщик
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="country" type="checkbox" name="check" value="[Страна]">
+                                        <label for="country">
+                                            Страна
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="price-segment" type="checkbox" name="check" value="[Ценовой сегмент]">
+                                        <label for="price-segment">
+                                            Ценовой сегмент
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="level-1" type="checkbox" name="check" value="[Уровень 1]">
+                                        <label for="level-1">
+                                            Уровень 1
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="level-2" type="checkbox" name="check" value="[Уровень 2]">
+                                        <label for="level-2">
+                                             Уровень 2
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="level-3" type="checkbox" name="check" value="[Уровень 3]">
+                                        <label for="level-3">
+                                             Уровень 3
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="level-4" type="checkbox" name="check" value="[Уровень 4]">
+                                        <label for="level-4">
+                                             Уровень 4
+                                        </label>
+                                    </div>
+
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="marketer" type="checkbox" name="check" value="[Маркетолог]">
+                                        <label for="marketer">
+                                            Маркетолог
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="description" type="checkbox" name="check" value="[Описание]">
+                                        <label for="description">
+                                            Описание
+                                        </label>
+                                    </div>
+
+                                </fieldset>
+                     </div>
+
+                    </div>
+
+
+                     <h4 class="panel-title">
+                        <a href="#exp" class="list-group-item strong" data-toggle="collapse" data-parent="#accordion">Выражения<i class="fa fa-caret-down"></i></a>
+                    </h4>
+
+                     <div class="collapse" id="exp">
+
+                          <div id="check-list-box2" class="list-group checked-list-box list-group-item button">
+                                <fieldset>
+                                    <div class="checkbox checkbox-success">
+                                        <input id="cash-price" type="checkbox" name="check" value="[Цена розница]">
+                                        <label for="cash-price">
+                                            Цена розница
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="data-of-price" type="checkbox" name="check" value="[Дата цены]">
+                                        <label for="data-of-price">
+                                            Дата цены
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="Balance" type="checkbox" name="check" value="[Количество]">
+                                        <label for="Balance">
+                                            Количество
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="balance-data" type="checkbox" name="check" value="[Дата остатка]">
+                                        <label for="balance-data">
+                                            Дата остатка
+                                        </label>
+                                    </div>
+
+                                    <div class="checkbox checkbox-success">
+                                        <input id="weight" type="checkbox" name="check" value="[Масса]">
+                                        <label for="weight">
+                                            Масса
+                                        </label>
+                                    </div>
+                                    <div class="checkbox checkbox-success">
+                                        <input id="volume" type="checkbox" name="check" value="[Объем]">
+                                        <label for="volume">
+                                            Объем
+                                        </label>
+                                    </div>
+
+                                     <div class="checkbox checkbox-success">
+                                        <input id="PriceOpt" type="checkbox" name="check" value="[Цена безнал]">
+                                        <label for="PriceOpt">
+                                            Цена безнал
+                                        </label>
+                                    </div>
+
+{#                                    <div class="checkbox checkbox-success">#}
+{#                                        <input id="product-photo" type="checkbox">#}
+{#                                        <label for="product-photo">#}
+{#                                            Фото товара#}
+{#                                        </label>#}
+{#                                    </div>#}
+                                </fieldset>
+                            </div>
+
+                    </div>
+
+
+                  </div>
+
+             </div>
+
+        </div>
+    </div>
+
+
+
+<div class="col-sm-9 col-md-9"  >
+        <div class="well">
+
+
+    <!--panel-->
+
+            <div class="row" style="padding-bottom: 40px">
+
+
+                    <div class="col-sm-9 col-md-9">
+
+                        <div class="input-group" style="padding-left: 100px;">
+
+                              <div class="input-group-btn">
+                                   <select id="selected" class="selectpicker" data-live-search="true" data-actions-box="true" data-style="btn-primary" name="select" title="Поиск по всем точкам">
+                                       <option disabled></option>
+                                       <option>Интернет</option>
+                                       <option>ОМА Минск</option>
+                                       <option>Брест</option>
+                                       <option>Витебск</option>
+                                       <option>Гродно</option>
+                                       <option>Гомель</option>
+                                       <option>Могилев</option>
+                                       <option>М-н Минск</option>
+                                       <option>М-н Бобруйск</option>
+                                       <option>М-н Гомель</option>
+                                       <option>М-н Барановичи ОМА</option>
+                                       <option>М-н Дзержинского</option>
+                                       <option>М-н Жлобин</option>
+                                       <option>ОМА Минск 999</option>
+                                       <option>М-н Витебск(НОВ.)</option>
+                                       <option>М-н Могилев(НОВ.)</option>
+                                       <option>М-н Гродно(НОВ.)</option>
+                                       <option>М-н Лида(НОВ.)</option>
+                                       <option>М-н Ванеева</option>
+                                       <option>М-н Орша</option>
+                                       <option>М-н Брест</option>
+                                       <option>М-н Бобруйск(Новый)</option>
+                                       <option>М-н Гомель</option>
+                                       <option>М-н Полоцк</option>
+{#                                      {%  for row in city %}#}
+{#                                          <option>{{ " | ".join(row) }}</option>#}
+{#                                      {% endfor %}#}
+                                   </select>
+                              </div>
+
+                            <input id="msg" type="text"  class="form-control"  placeholder="Код товара: 1050015" name="search" value = {{ search }}>
+
+                            <div class="input-group-btn" style="padding-left:10px">
+
+                            <button id="search_button" type="submit" class="btn btn btn-primary" onclick="save()">Найти</button>
+
+                            </div>
+
+
+                          </div>
+
+                    </div>
+
+            </div>
+    </div>
+</div>
+
+</form>
+
+        {% include "error.html"  %}
+
+
+
+<div class="col-lg-12" id="loadData">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h3 class="panel-title">Остатки</h3>
+                    </div>
+
+                </div>
+
+
+
+{% block content %}
+
+
+
+    <div id="loading" class="spinner">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+    </div>
+
+        {% include "table-main.html" %}
+{% endblock %}
+
+
+</div>
+
+ </div>
+
+</div>
+<div id="spinner"></div>
+
+{% include "footer.html"  %}
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.searchable-1.0.0.min.js') }}"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

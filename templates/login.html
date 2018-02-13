@@ -1,0 +1,100 @@
+<html>
+  <head>
+      <title>Web Monitor</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="{{ url_for('static', filename='bootstrap-3.3.7/dist/css/bootstrap.css') }}" rel="stylesheet">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='login.css') }}">
+      	<!-- Website Font style -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+		<!-- Google Fonts -->
+      <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+      <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+
+       <script type="text/javascript" src="{{ url_for('static', filename='play.js') }}"></script>
+
+  </head>
+
+
+	<body>
+
+
+
+    <div class="container">
+			<div class="row main">
+				<div class="panel-heading">
+	               <div class="panel-title text-center">
+	               		<h1 class="title">OMA</h1>
+	               		<hr />
+	               	</div>
+	            </div>
+				<div class="main-login main-center">
+					<form class="form-horizontal" method="post" action="" role="form">
+                       {{ form_login.csrf }}
+						<div class="form-group">
+							<label for="username" class="cols-sm-2 control-label">Username</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
+									<input type="text" class="form-control" name="username" id="username"  placeholder="Enter your Username"/>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="password" class="cols-sm-2 control-label">Password</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+									<input type="password" class="form-control" name="password" id="password"  placeholder="Enter your Password"/>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="form-group ">
+							<button type="submit" class="btn btn-primary btn-lg btn-block login-button" id="login">Login</button>
+						</div>
+
+					</form>
+				</div>
+			</div>
+
+        <div class="main-center">
+            <div class="row main">
+                 <div class="cols-sm-10">
+                    <div class="form-group ">
+                          {% with messages = get_flashed_messages(with_categories=true) %}
+                                        {% if messages %}
+
+                                    {% for message in messages %}
+                                        {% if "Ошибка" not in message[1]: %}
+                                            <div class="alert alert-info">
+                                                <strong>Добро пожаловать: </strong> {{ message[1] }}
+                                            </div>
+                                        {% endif %}
+
+                                        {% if "Ошибка" in message[1]: %}
+                                            <div class="alert alert-warning">
+                                                {{ message[1] }}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                        {% endif %}
+                                    {% endwith %}
+
+                    </div>
+                </div>
+             </div>
+        </div>
+
+
+
+		</div>
+
+		 <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/bootstrap.min.js') }}"></script>
+
+  </body>
+</html>
+
+
